@@ -63,14 +63,18 @@ select * from employee where hiredate between '2003-06-01' and '2004-03-01';
 -- Task – Delete a record in Customer table where the name is Robert Walter (There may be constraints that rely on this, find out how to resolve them).
 alter table invoice
 drop constraint fk_invoicecustomerid;
+
 alter table invoice
 add constraint fk_invoicecustomerid
 foreign key (customerid) references customer (customerid) on delete cascade on update cascade;
+
 alter table invoiceline
 drop constraint fk_invoicelineinvoiceid;
+
 alter table invoiceline
 add constraint fk_invoicelineinvoiceid
 foreign key (invoiceid) references invoice (invoiceid) on delete cascade on update cascade;
+
 delete from customer where firstname = 'Robert' and lastname = 'Walker';
 
 -- 3.0	SQL Functions
@@ -120,12 +124,25 @@ select mostExpensiveTrack();
 
 -- 3.3 User Defined Scalar Functions
 -- Task – Create a function that returns the average price of invoiceline items in the invoiceline table
-select avg(unitprice) from invoiceline;
-How do I do it user defined?
+create or replace function averageInvoicePrice()
+returns float as $$
+begin
+	return (select avg(unitprice) from invoiceline);
+ end;
+$$ language plpgsql;
+
+select averageInvoicePrice();
 
 -- 3.4 User Defined Table Valued Functions
 -- Task – Create a function that returns all employees who are born after 1968.
-select * from employee where birthdate > '1968-12-31';
+create or replace function bornAfter68()
+returns setof employee as $$
+begin
+	return query (select * from employee where birthdate > '1968-12-31');
+ end;
+$$ language plpgsql;
+
+select bornAfter68();
 
 -- 4.0 Stored Procedures
 --  In this section you will be creating and executing stored procedures. You will be creating various types of stored procedures that take input and output parameters.
@@ -187,7 +204,6 @@ select firstname, lastname, invoiceid from customer inner join invoice on custom
 
 -- 7.2 OUTER
 -- Task – Create an outer join that joins the customer and invoice table, specifying the CustomerId, firstname, lastname, invoiceId, and total.
-
 select customer.customerid, firstname, lastname, invoiceid, total from customer full outer join invoice on customer.customerid = invoice.customerid;
 
 -- 7.3 RIGHT
