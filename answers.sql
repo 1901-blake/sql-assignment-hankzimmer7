@@ -85,8 +85,8 @@ delete from customer where firstname = 'Robert' and lastname = 'Walker';
 create or replace function currentTime()
 returns text as $$
 begin
-	return current_time;
- end;
+    return current_time;
+end;
 $$ language plpgsql;
 
 select currentTime();
@@ -138,10 +138,10 @@ select averageInvoicePrice();
 create or replace function bornAfter68()
 returns setof employee as $$
 begin
-	return query (select * from employee where birthdate > '1968-12-31');
- end;
+    return query (select * from employee where birthdate > '1968-12-31');
+end;
 $$ language plpgsql;
-=
+
 select bornAfter68();
 
 -- 4.0 Stored Procedures
@@ -174,8 +174,9 @@ select updateEmployee(10, 'Harris'::varchar, 'Tina'::varchar, 'Trainee'::varchar
 create or replace function employeeManager(e_id int)
 returns text as $$
 begin
-	return (select lastname from employee
-    where employeeid = (select reportsto from employee where employeeid = e_id));
+    return (select lastname from employee where employeeid = (
+                select reportsto from employee where employeeid = e_id
+            ));
 end;
 $$ language plpgsql;
 
@@ -186,8 +187,7 @@ select employeeManager(7);
 create or replace function customerSearch(c_id int)
 returns table (customer_fname varchar, customer_lname varchar, customer_company varchar) as $$
 begin
-	return query (select firstname, lastname, company from customer 
-		   where customerid = c_id);
+	return query (select firstname, lastname, company from customer where customerid = c_id);
 end;
 $$ language plpgsql;
 
@@ -217,7 +217,7 @@ create or replace function insertCustomer(customeridinput int, firstnameinput va
 returns void as $$
 begin
     insert into customer (customerid, firstname, lastname, company, address, city, state, country, postalcode, phone, fax, email, supportrepid) 
-		   values (customeridinput, firstnameinput, lastnameinput, companyinput, addressinput, cityinput, stateinput, countryinput, postalcodeinput, phoneinput, faxinput, emailinput, supportrepidinput);
+        values (customeridinput, firstnameinput, lastnameinput, companyinput, addressinput, cityinput, stateinput, countryinput, postalcodeinput, phoneinput, faxinput, emailinput, supportrepidinput);
 end;
 $$ language plpgsql;
 
