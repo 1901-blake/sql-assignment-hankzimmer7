@@ -141,7 +141,7 @@ begin
 	return query (select * from employee where birthdate > '1968-12-31');
  end;
 $$ language plpgsql;
-
+=
 select bornAfter68();
 
 -- 4.0 Stored Procedures
@@ -149,6 +149,14 @@ select bornAfter68();
 
 -- 4.1 Basic Stored Procedure
 -- Task – Create a stored procedure that selects the first and last names of all the employees.
+create or replace function firstAndLastNames()
+returns table (fname varchar, lname varchar) as $$
+begin
+    return (select firstname, lastname from employee);
+end;
+$$ language plpgsql;
+
+select firstAndLastNames();
 
 -- 4.2 Stored Procedure Input Parameters
 -- Task – Create a stored procedure that updates the personal information of an employee.
