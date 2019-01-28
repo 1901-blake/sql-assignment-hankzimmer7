@@ -152,14 +152,15 @@ select bornAfter68();
 
 -- 4.2 Stored Procedure Input Parameters
 -- Task – Create a stored procedure that updates the personal information of an employee.
-create or replace function
-change_employee(e_id int, fname varchar, lname varchar, titleinput varchar,)
+create or replace function updateEmployee(e_id int, firstnameinput varchar, lastnameinput varchar, titleinput varchar, reportstoinput int, birthdateinput timestamp, hiredateinput timestamp, addressinput varchar, cityinput varchar, stateinput varchar, countryinput varchar, postalcodeinput varchar, phoneinput varchar, faxinput varchar, emailinput varchar)
 returns void as $$
 begin
     update employee set firstname = firstnameinput, lastname = lastnameinput, title = titleinput, reportsto = reportstoinput, birthdate = birthdateinput, hiredate = hiredateinput, address = addressinput, city = cityinput, state = stateinput, country = countryinput, postalcode = postalcodeinput, phone = phoneinput, fax = faxinput, email = emailinput
         where employeeid = e_id;
 end;
 $$ language plpgsql;
+
+select updateEmployee(10, 'Harris'::varchar, 'Tina'::varchar, 'Trainee'::varchar, 2, '1982-05-14'::timestamp, '2019-01-28'::timestamp, '17 Maple St'::varchar, 'Miami'::varchar, 'FL'::varchar, 'CAN'::varchar, '42934'::varchar, '+1 425-2348'::varchar, '+1 712-3812'::varchar, 'tina@chinookcorp.com'::varchar);
 ----------------------------------------------------------------- NEEDS TO BE FINISHED
 
 -- Task – Create a stored procedure that returns the managers of an employee.
