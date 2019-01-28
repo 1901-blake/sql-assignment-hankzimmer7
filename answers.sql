@@ -156,7 +156,7 @@ begin
 end;
 $$ language plpgsql;
 
-select firstAndLastNames();
+select * from firstAndLastNames();
 
 -- 4.2 Stored Procedure Input Parameters
 -- Task – Create a stored procedure that updates the personal information of an employee.
@@ -183,12 +183,45 @@ select employeeManager(7);
 
 -- 4.3 Stored Procedure Output Parameters
 -- Task – Create a stored procedure that returns the name and company of a customer.
+create or replace function customerSearch(c_id int)
+returns table (customer_fname varchar, customer_lname varchar, customer_company varchar) as $$
+begin
+	return query (select firstname, lastname, company from customer 
+		   where customerid = c_id);
+end;
+$$ language plpgsql;
+
+select * from customerSearch(10);
 
 -- 5.0 Transactions
 -- In this section you will be working with transactions. Transactions are usually nested within a stored procedure.
 -- Task – Create a transaction that given a invoiceId will delete that invoice (There may be constraints that rely on this, find out how to resolve them).
+create or replace function deleteInvoice(invoice_id_input int)
+returns void as $$
+begin
+	delete from invoice where invoiceid = invoice_id_input;
+end;
+$$ language plpgsql;
+
+alter table invoiceline
+drop constraint fk_invoicelineinvoiceid;
+
+alter table invoiceline
+add constraint fk_invoicelineinvoiceid
+foreign key (invoiceid) references invoice (invoiceid) on delete cascade on update cascade;
+
+select deleteInvoice(407);
 
 -- Task – Create a transaction nested within a stored procedure that inserts a new record in the Customer table
+create or replace function insertCustomer(customeridinput int, firstnameinput varchar, lastnameinput varchar, companyinput varchar, addressinput varchar, cityinput varchar, stateinput varchar, countryinput varchar, postalcodeinput varchar, phoneinput varchar, faxinput varchar, emailinput varchar, supportrepidinput int)
+returns void as $$
+begin
+    insert into customer (customerid, firstname, lastname, company, address, city, state, country, postalcode, phone, fax, email, supportrepid) 
+		   values (customeridinput, firstnameinput, lastnameinput, companyinput, addressinput, cityinput, stateinput, countryinput, postalcodeinput, phoneinput, faxinput, emailinput, supportrepidinput);
+end;
+$$ language plpgsql;
+
+select insertCustomer(63, 'Yost'::varchar, 'Steph'::varchar, 'Nappins'::varchar, '384 5th Ave'::varchar, 'Tampa'::varchar, 'FL'::varchar, 'USA'::varchar, '61234'::varchar, '+1 382-29238'::varchar, '+1 382-9182'::varchar, 'steph@gmail.com'::varchar, 3);
 
 -- 6.0 Triggers
 -- In this section you will create various kinds of triggers that work when certain DML statements are executed on a table.
