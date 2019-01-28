@@ -152,7 +152,7 @@ select bornAfter68();
 create or replace function firstAndLastNames()
 returns table (fname varchar, lname varchar) as $$
 begin
-    return (select firstname, lastname from employee);
+    return query select firstname, lastname from employee;
 end;
 $$ language plpgsql;
 
@@ -169,9 +169,17 @@ end;
 $$ language plpgsql;
 
 select updateEmployee(10, 'Harris'::varchar, 'Tina'::varchar, 'Trainee'::varchar, 2, '1982-05-14'::timestamp, '2019-01-28'::timestamp, '17 Maple St'::varchar, 'Miami'::varchar, 'FL'::varchar, 'CAN'::varchar, '42934'::varchar, '+1 425-2348'::varchar, '+1 712-3812'::varchar, 'tina@chinookcorp.com'::varchar);
------------------------------------------------------------------ NEEDS TO BE FINISHED
 
 -- Task – Create a stored procedure that returns the managers of an employee.
+create or replace function employeeManager(e_id int)
+returns text as $$
+begin
+	return (select lastname from employee
+    where employeeid = (select reportsto from employee where employeeid = e_id));
+end;
+$$ language plpgsql;
+
+select employeeManager(7);
 
 -- 4.3 Stored Procedure Output Parameters
 -- Task – Create a stored procedure that returns the name and company of a customer.
